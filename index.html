@@ -94,23 +94,33 @@
         /* Timeline in alto */
         .timeline-container {
             position: absolute;
-            top: 2rem;
-            left: 4rem;
-            right: 4rem;
+            top: 1.5rem;
+            left: 2rem;
+            right: 2rem;
             z-index: 10;
         }
 
         .timeline-wrapper {
             position: relative;
-            max-width: 72rem;
+            max-width: 60rem;
             margin: 0 auto;
+            text-align: center;
+        }
+
+        .timeline-current {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .timeline-line {
-            height: 4px;
+            height: 6px;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 9999px;
             position: relative;
+            overflow: hidden;
         }
 
         .timeline-progress {
@@ -121,83 +131,7 @@
             background: white;
             border-radius: 9999px;
             transition: width 0.5s ease-in-out;
-        }
-
-        .timeline-points {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-        }
-
-        .timeline-point {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .timeline-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .timeline-dot.active {
-            background: white;
-            transform: scale(1.5);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .timeline-dot.visited {
-            background: rgba(255, 255, 255, 0.6);
-        }
-
-        .timeline-dot.future {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .timeline-label {
-            position: absolute;
-            top: 1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            font-size: 0.875rem;
-            color: white;
-            opacity: 0.6;
-            transition: all 0.3s ease;
-        }
-
-        .timeline-label.active {
-            opacity: 1;
-            font-weight: bold;
-            transform: translateX(-50%) scale(1.1);
-        }
-
-        .timeline-point:hover .timeline-label {
-            opacity: 1;
-        }
-
-        /* Timeline mobile migliorata */
-        .timeline-mobile-label {
-            display: none;
-            position: absolute;
-            top: -2.5rem;
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .timeline-mobile-label.show {
-            opacity: 1;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         /* Pulsanti navigazione */
@@ -288,35 +222,17 @@
                 top: 1rem;
             }
 
-            .timeline-wrapper {
-                padding: 0;
+            .timeline-current {
+                font-size: 1.25rem;
+                margin-bottom: 0.75rem;
             }
 
             .timeline-line {
-                height: 6px;
+                height: 8px;
             }
 
             .timeline-progress {
-                height: 6px;
-            }
-
-            .timeline-dot {
-                width: 14px;
-                height: 14px;
-            }
-
-            .timeline-dot.active {
-                transform: scale(1.8);
-            }
-
-            .timeline-label {
-                display: none;
-            }
-
-            .timeline-mobile-label {
-                display: block;
-                font-size: 1.1rem;
-                top: -2rem;
+                height: 8px;
             }
 
             .emoji {
@@ -400,27 +316,17 @@
                 top: 0.75rem;
             }
 
+            .timeline-current {
+                font-size: 1.1rem;
+                margin-bottom: 0.5rem;
+            }
+
             .timeline-line {
-                height: 8px;
+                height: 10px;
             }
 
             .timeline-progress {
-                height: 8px;
-            }
-
-            .timeline-dot {
-                width: 16px;
-                height: 16px;
-            }
-
-            .timeline-dot.active {
-                transform: scale(2);
-            }
-
-            .timeline-mobile-label {
-                font-size: 1rem;
-                top: -1.75rem;
-                font-weight: 600;
+                height: 10px;
             }
 
             .emoji {
@@ -491,8 +397,8 @@
         }
 
         @media (max-width: 360px) {
-            .timeline-mobile-label {
-                font-size: 0.9rem;
+            .timeline-current {
+                font-size: 1rem;
             }
 
             .emoji {
@@ -582,11 +488,10 @@
         <!-- Timeline -->
         <div class="timeline-container">
             <div class="timeline-wrapper">
-                <div class="timeline-mobile-label" id="timelineMobileLabel">CHI È?</div>
+                <div class="timeline-current" id="timelineCurrent">CHI È?</div>
                 <div class="timeline-line">
                     <div class="timeline-progress" id="timelineProgress"></div>
                 </div>
-                <div class="timeline-points" id="timelinePoints"></div>
             </div>
         </div>
 
@@ -681,11 +586,10 @@
 
         let currentIndex = 0;
         const slidesWrapper = document.getElementById('slidesWrapper');
-        const timelinePoints = document.getElementById('timelinePoints');
         const progressDots = document.getElementById('progressDots');
         const counter = document.getElementById('counter');
         const timelineProgress = document.getElementById('timelineProgress');
-        const timelineMobileLabel = document.getElementById('timelineMobileLabel');
+        const timelineCurrent = document.getElementById('timelineCurrent');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
 
@@ -732,18 +636,6 @@
             slidesWrapper.appendChild(slide);
         });
 
-        // Crea punti timeline
-        events.forEach((event, index) => {
-            const point = document.createElement('div');
-            point.className = 'timeline-point';
-            point.innerHTML = `
-                <div class="timeline-dot ${index === 0 ? 'active' : 'future'}"></div>
-                <div class="timeline-label ${index === 0 ? 'active' : ''}">${event.year}</div>
-            `;
-            point.onclick = () => goToSlide(index);
-            timelinePoints.appendChild(point);
-        });
-
         // Crea indicatori progresso
         events.forEach((_, index) => {
             const dot = document.createElement('div');
@@ -756,26 +648,8 @@
             currentIndex = index;
             slidesWrapper.style.transform = `translateX(-${index * 100}%)`;
             
-            // Aggiorna timeline
-            const dots = timelinePoints.querySelectorAll('.timeline-dot');
-            const labels = timelinePoints.querySelectorAll('.timeline-label');
-            dots.forEach((dot, i) => {
-                dot.className = 'timeline-dot';
-                if (i === index) dot.classList.add('active');
-                else if (i < index) dot.classList.add('visited');
-                else dot.classList.add('future');
-            });
-            labels.forEach((label, i) => {
-                label.className = 'timeline-label';
-                if (i === index) label.classList.add('active');
-            });
-
-            // Aggiorna label mobile
-            timelineMobileLabel.textContent = events[index].year;
-            timelineMobileLabel.classList.remove('show');
-            setTimeout(() => {
-                timelineMobileLabel.classList.add('show');
-            }, 50);
+            // Aggiorna anno corrente
+            timelineCurrent.textContent = events[index].year;
 
             // Aggiorna barra progresso
             const progress = (index / (events.length - 1)) * 100;
